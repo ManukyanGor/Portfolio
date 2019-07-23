@@ -1,0 +1,25 @@
+
+#root {
+    margin: auto;
+    height: 520px;
+    width: 520px;
+    border: 1px solid black;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.item {
+    height: 50px;
+    width: 50px;
+    border: 1px solid;
+    background-color: #f1f1f1;
+}
+
+.opened {
+    height: 50px;
+    width: 50px;
+    background-color: #fff;
+    border: 1px solid;
+}
+
+
