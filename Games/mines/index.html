@@ -13,8 +13,15 @@
     
         <div class='win_or_lose'>
             <div>
-                <p id = 'message'></p>
-                <button onclick="newGame()">New Game</button>
+                <p id = 'message' class="text"></p>
+                <div class="svg-wrapper">
+                    <svg height="40" width="150" xmlns="http://www.w3.org/2000/svg">
+                      <rect id="shape" height="40" width="150" />
+                      <div id="text">
+                        <a href="" onclick="newGame()"><span class="spot"></span>New Game</a>
+                      </div>
+                    </svg>
+                  </div>
             </div>    
         </div>
     </div>
