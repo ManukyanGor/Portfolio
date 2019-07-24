@@ -1,11 +1,11 @@
 const GameBox = document.getElementById('root');
-
 const GameSize = 15;
 const MinePercent = 15;
 const Percent = Math.ceil(GameSize * GameSize / 100 * MinePercent);
 const VirtualBoard = [];
-const ZeroHistory = [];
+const ZeroHistory = [];// changed to recursve array
 
+//When clicked field is mine
 const isMine = () => {
     const Items = document.getElementsByClassName('item');
     for (let i = 0; i < GameSize; i++) {
@@ -18,6 +18,7 @@ const isMine = () => {
     winOrLoss('You Loss');
 }
 
+//Right click on mouse from set mine
 const setMine = (event) => {
     event.preventDefault();
     if (event.target.getAttribute('class') === 'item mine') {
@@ -31,6 +32,7 @@ const setMine = (event) => {
     }
 }
 
+//End game function
 const winOrLoss = (message) => {
     const win = document.getElementsByClassName('win_or_lose')[0];
     document.getElementById('message').textContent = message;
@@ -39,6 +41,7 @@ const winOrLoss = (message) => {
     win.style.display = 'flex';
 }
 
+//Function for set winning
 const youWinn = () => {
     const opened = document.getElementsByClassName('item opened').length;
     if (opened === GameSize * GameSize - Percent) {
@@ -46,6 +49,8 @@ const youWinn = () => {
     }
 }
 
+
+//Paint in board
 const paintItem = (position) => {
     let positionI = Math.floor(position / GameSize);
     let positionJ = position % GameSize;
@@ -54,10 +59,13 @@ const paintItem = (position) => {
     Items[position].setAttribute('class', 'item opened');
 }
 
+
+//new game (trial version)
 const newGame = () => {
     location.reload();
 }
 
+//Checking clicked field
 const open = (position) => {
     let positionI = Math.floor(position / GameSize);
     let positionJ = position % GameSize; 
@@ -85,6 +93,7 @@ const open = (position) => {
     }
 }
 
+//click on field 
 const check = (event) => {
     const position = Number(event.target.getAttribute('aria-index'));
     const positionI = Math.floor(position / GameSize);
@@ -96,8 +105,7 @@ const check = (event) => {
     }
 }
 
-
-
+//Painting
 for (let i = 0; i < GameSize; i++) {
     GameBox.style.width = `${(GameSize * (3.125 + .023))}em` ;
     GameBox.style.height = `${(GameSize * (3.125 + .023))}em`;
@@ -113,6 +121,7 @@ for (let i = 0; i < GameSize; i++) {
     }
 }
 
+//fill mines in virtual board
 const fillMines = () => {    
     for (let index = 0; index < Percent; index++) {
         let position =  Math.floor(Math.random() * (GameSize * GameSize)); 
@@ -126,10 +135,9 @@ const fillMines = () => {
         VirtualBoard[positionI][positionJ] = '*';
     }    
     fillNumbers();
-    console.log(VirtualBoard);
-    
 }
 
+//fill mines count in virtual board
 const fillNumbers = () => {
     for (let i = 0; i < GameSize; i++) {
         for (let j = 0; j < GameSize; j++) {
