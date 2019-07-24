@@ -1,7 +1,8 @@
 const GameBox = document.getElementById('root');
 
-const GameSize = 10;
-const Percent = 20;
+const GameSize = 15;
+const MinePercent = 15;
+const Percent = Math.ceil(GameSize * GameSize / 100 * MinePercent);
 const VirtualBoard = [];
 const ZeroHistory = [];
 
@@ -33,6 +34,8 @@ const setMine = (event) => {
 const winOrLoss = (message) => {
     const win = document.getElementsByClassName('win_or_lose')[0];
     document.getElementById('message').textContent = message;
+    win.style.width = `${(GameSize * (3.125 + .023))}em` ;
+    win.style.height = `${(GameSize * (3.125 + .023))}em`;
     win.style.display = 'flex';
 }
 
@@ -96,6 +99,8 @@ const check = (event) => {
 
 
 for (let i = 0; i < GameSize; i++) {
+    GameBox.style.width = `${(GameSize * (3.125 + .023))}em` ;
+    GameBox.style.height = `${(GameSize * (3.125 + .023))}em`;
     VirtualBoard.push([]);
     for(let j = 0; j < GameSize; j++) {
         const Div = document.createElement('div');
@@ -110,11 +115,11 @@ for (let i = 0; i < GameSize; i++) {
 
 const fillMines = () => {    
     for (let index = 0; index < Percent; index++) {
-        let position =  Math.floor(Math.random() * 100); 
+        let position =  Math.floor(Math.random() * (GameSize * GameSize)); 
         let positionI = Math.floor(position / GameSize);
         let positionJ = position % GameSize;
         while (VirtualBoard[positionI][positionJ] === '*') {
-            position =  Math.floor(Math.random() * 100);
+            position =  Math.floor(Math.random() * (GameSize * GameSize));
             positionI = Math.floor(position / GameSize);
             positionJ = position % GameSize;
         }        
