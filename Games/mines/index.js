@@ -3,6 +3,7 @@ const GameBox = document.getElementById('root');
 const GameSize = 10;
 const Percent = 20;
 const VirtualBoard = [];
+const ZeroHistory = [];
 
 const isMine = () => {
     const Items = document.getElementsByClassName('item');
@@ -13,25 +14,73 @@ const isMine = () => {
             }
         }
     }
-    alert('Game Over');
+    winOrLoss('You Loss');
 }
 
-const bacel = (position,positionI,positionJ) => { ///poxel anun@
-    console.log(position, positionI, positionJ)
+const setMine = (event) => {
+    event.preventDefault();
+    if (event.target.getAttribute('class') === 'item mine') {
+        event.target.setAttribute('class', 'item');
+        event.target.setAttribute('onclick', 'check(event)');
+        return;
+    }
+    if (event.target.getAttribute('class') !== 'item opened') {
+        event.target.setAttribute('class', 'item mine');
+        event.target.removeAttribute('onclick', 'check(event)');
+    }
+}
+
+const winOrLoss = (message) => {
+    const win = document.getElementsByClassName('win_or_lose')[0];
+    document.getElementById('message').textContent = message;
+    win.style.display = 'flex';
+}
+
+const youWinn = () => {
+    const opened = document.getElementsByClassName('item opened').length;
+    if (opened === GameSize * GameSize - Percent) {
+        winOrLoss('You Winn');
+    }
+}
+
+const paintItem = (position) => {
+    let positionI = Math.floor(position / GameSize);
+    let positionJ = position % GameSize;
     const Items = document.getElementsByClassName('item');
-    Items[position].textContent = VirtualBoard[positionI][positionJ];
+    Items[position].textContent = VirtualBoard[positionI][positionJ] !== 0 ? VirtualBoard[positionI][positionJ] : '';
     Items[position].setAttribute('class', 'item opened');
-    if(VirtualBoard[positionI][positionJ] === 0){
-        for(let i = -1; i <= 1; i++){
-            for(let j = -1; j <= 1; j++){
-                if ((positionI + i >= 0 && positionI + i < GameSize) && (positionJ + j >= 0 && positionJ + j < GameSize)) {
-                    Items[(positionI + i) * GameSize + positionJ + j].textContent = VirtualBoard[positionI + i][positionJ + j];
-                    Items[(positionI + i) * GameSize + positionJ + j].setAttribute('class', 'item opened');
+}
+
+const newGame = () => {
+    location.reload();
+}
+
+const open = (position) => {
+    let positionI = Math.floor(position / GameSize);
+    let positionJ = position % GameSize; 
+    const Items = document.getElementsByClassName('item');
+    if (VirtualBoard[positionI][positionJ] !== 0) {
+        paintItem(position);
+        youWinn();
+        return;
+    }
+    if (ZeroHistory.indexOf(position) !== -1) {
+        return;
+    }
+    ZeroHistory.push(positionI * GameSize + positionJ);
+    paintItem(position);
+    for(let i = -1; i <= 1; i++){
+        for(let j = -1; j <= 1; j++){
+            if ((positionI + i >= 0 && positionI + i < GameSize) && (positionJ + j >= 0 && positionJ + j < GameSize)) {
+                paintItem(((positionI + i) * GameSize) + positionJ + j);
+                youWinn();
+                if(VirtualBoard[positionI + i][positionJ + j] === 0){
+                    open(((positionI + i) * GameSize) + positionJ + j);
                 }
             }
         }
     }
-} 
+}
 
 const check = (event) => {
     const position = Number(event.target.getAttribute('aria-index'));
@@ -40,7 +89,7 @@ const check = (event) => {
     if (VirtualBoard[positionI][positionJ] === '*') {
         isMine();
     } else {
-        bacel(position,positionI,positionJ);
+        open(position,positionI,positionJ);
     }
 }
 
@@ -51,7 +100,8 @@ for (let i = 0; i < GameSize; i++) {
     for(let j = 0; j < GameSize; j++) {
         const Div = document.createElement('div');
         Div.setAttribute('class', 'item');
-        Div.setAttribute('onclick', 'check(event)');        
+        Div.setAttribute('onclick', 'check(event)'); 
+        Div.addEventListener('contextmenu', setMine);        
         Div.setAttribute('aria-index', `${ i * GameSize + j }`);
         GameBox.appendChild(Div);        
         VirtualBoard[i].push(0);
@@ -59,16 +109,20 @@ for (let i = 0; i < GameSize; i++) {
 }
 
 const fillMines = () => {    
-    for (let index = 0; index < Percent; index++) {       
-        let positionI = Math.floor(Math.random() * 10);
-        let positionJ = Math.floor(Math.random() * 10);
+    for (let index = 0; index < Percent; index++) {
+        let position =  Math.floor(Math.random() * 100); 
+        let positionI = Math.floor(position / GameSize);
+        let positionJ = position % GameSize;
         while (VirtualBoard[positionI][positionJ] === '*') {
-            positionI = Math.floor(Math.random() * 10);
-            positionJ = Math.floor(Math.random() * 10);
+            position =  Math.floor(Math.random() * 100);
+            positionI = Math.floor(position / GameSize);
+            positionJ = position % GameSize;
         }        
         VirtualBoard[positionI][positionJ] = '*';
     }    
     fillNumbers();
+    console.log(VirtualBoard);
+    
 }
 
 const fillNumbers = () => {
